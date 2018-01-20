@@ -5,7 +5,7 @@ exports.twitter = {
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 };
 
-var omdbApi = "http://www.omdbapi.com/?i=tt3896198&apikey=9dc2047";
+// var omdbApi = "http://www.omdbapi.com/?i=tt3896198&apikey=9dc2047";
 
 exports.spotify = {
   SPOTIFY_ID: process.env.SPOTIFY_ID,
