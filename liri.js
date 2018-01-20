@@ -10,7 +10,7 @@ var keys = require("./keys.js");
 // var client = new Twitter(keys.twitter);
 
 
-if (liriArgv ===  `my-tweets`){
+if (liriArgv === `my-tweets`){
 	var client = new Twitter({
 			consumer_key: process.env.TWITTER_CONSUMER_KEY,
 			consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -41,8 +41,7 @@ var movie = process.argv[3];
 
 request(queryUrl, function(error, response, body){
 	var jsonData = JSON.parse(body);
-		console.log(jsonData);
-
+		// console.log(jsonData);
 
 	if (liriArgv === 'movie-this'){
 		var movieResults = (
@@ -55,24 +54,40 @@ request(queryUrl, function(error, response, body){
 			"Actors: " + jsonData.Actors+"\r\n"+
 			"Rotten Tomatoes Rating: " + jsonData.tomatoRating+"\r\n"
 		)
-		// console.log(movieResults);
+		console.log(queryUrl);
 	} else {
 		request(mrNobody, function(error, response, body){
-			// console.log(body);
+			console.log(body);
 		})
 	}
 });
 	 
  // ----------------------SPOTIFY-------------------------------------------------------------------------
 
+var songSearch = process.argv[3];
  if (liriArgv === `spotify-this-song`){
-	var songSearch === process.argv[3];
-	spotify.search({ type: 'track', query: 'dancing in the moonlight' }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;
-    }
- 
-    // Do something with 'data' 
-});
+	// var spotifyId = ({
+	// 	SPOTIFY_ID: process.env.SPOTIFY_ID,
+	// 	SPOTIFY_SECRET: process.env.SPOTIFY_SECRET
+	// 	})
+
+	spotify.search({ type: 'track', query: songSearch }, function(err, data) {
+    if ( !err ) {
+       console.log(data);
+   	}   
+	})
+};
+
+// =============================DO WHAT IT SAYS==========================================================
+var logs = process.argv[3];
+
+if (liriArgv === `do-what-it-says`){
+
 }
+fs.appendFile(logs, function(err){
+	if (err) {
+		console.log(err);
+	} else {
+		console.log("Content Added!")
+	}
+});
