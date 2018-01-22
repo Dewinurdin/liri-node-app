@@ -8,7 +8,7 @@ exports.twitter = {
 // var omdbApi = "http://www.omdbapi.com/?i=tt3896198&apikey=9dc2047";
 
 exports.spotify = {
-  SPOTIFY_ID: process.env.SPOTIFY_ID,
-  SPOTIFY_SECRET: process.env.SPOTIFY_SECRET
+  id: process.env.SPOTIFY_ID,
+  secret: process.env.SPOTIFY_SECRET
 };
 
