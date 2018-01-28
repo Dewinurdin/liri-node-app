@@ -6,7 +6,6 @@ var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require("request");
 var keys = require("./keys.js");
-// console.log(keys.twitter.consumer_key);
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 
@@ -29,11 +28,8 @@ if (liriArgv === `my-tweets`){
 	})
 };
 
-// logText();
-
 // ----------------OMDB------------------------------------------------------------------------------
 // run a request to the OMDB API with the movie specified
-// var movie = process.argv[3];
 var queryUrl = "http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=40e9cece";
 var mrNobody = "http://www.omdbapi.com/?t=mr+nobody+&y=&plot=short&r=json&tomatoes=true&apikey=9dc2047";
 
@@ -60,14 +56,10 @@ if (liriArgv === "movie-this"){
 			console.log(body);
 		});
 	}
-}
+};
 
-
-// logText();
-	 
  // ----------------------SPOTIFY-------------------------------------------------------------------------
 
-// var songSearch = process.argv[3];
  if (liriArgv === `spotify-this-song`){
  	
 	spotify.search({ type: 'track', query: query, limit: 1})
@@ -88,12 +80,9 @@ if (liriArgv === "movie-this"){
 	  });
 };
 
-// logText();
-
 // =============================DO WHAT IT SAYS==========================================================
 // Using the fs Node package, LIRI will take the text inside of random.txt and 
 //then use it to call one of LIRI's commands.
-
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
 function doWhatItSays(){
 	if (liriArgv === `do-what-it-says`){
@@ -106,6 +95,7 @@ function doWhatItSays(){
 		});
 	}
 }
+doWhatItSays();
 
 // In addition to logging the data to your terminal/bash window, 
 //output the data to a .txt file called log.txt.
@@ -113,5 +103,5 @@ function doWhatItSays(){
 // Do not overwrite your file each time you run a command.
 
 function logText(){
-    fs.writeFile("log.txt", "LIRI: " + liriArgv + "\nQuery: " + query + "\n"); 
+    fs.appendFile("log.txt", "LIRI: " + liriArgv + "\nQuery: " + query + "\n"); 
 };
