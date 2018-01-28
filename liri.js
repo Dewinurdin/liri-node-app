@@ -24,6 +24,7 @@ if (liriArgv === `my-tweets`){
 		// console.log(response[0].text);
 	for (var i = 0; i < response.length; i++){
 			console.log(response[i].text);
+			console.log(response[i].created_at);
 		}
 	})
 };
@@ -89,28 +90,27 @@ if (liriArgv === "movie-this"){
 // logText();
 
 // =============================DO WHAT IT SAYS==========================================================
-// node liri.js do-what-it-says
-
 // Using the fs Node package, LIRI will take the text inside of random.txt and 
 //then use it to call one of LIRI's commands.
 
 // It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-// Feel free to change the text in that document to test out the feature for other commands.
-
-if (liriArgv === `do-what-it-says`){
+function doWhatItSays(){
+	if (liriArgv === `do-what-it-says`){
 	fs.readFile("random.txt", "utf8", function(err, data){
 		if (err) {
 			console.log(err);
 		} else {
 			console.log(data);
-		}
-	});
+			}
+		});
+	}
 }
+
 // In addition to logging the data to your terminal/bash window, 
 //output the data to a .txt file called log.txt.
 // Make sure you append each command you run to the log.txt file. 
 // Do not overwrite your file each time you run a command.
 
 function logText(){
-    fs.appendFile("log.txt", "LIRI: " + liriArgv + "\nQuery: " + query + "\n"); 
+    fs.writeFile("log.txt", "LIRI: " + liriArgv + "\nQuery: " + query + "\n"); 
 };
