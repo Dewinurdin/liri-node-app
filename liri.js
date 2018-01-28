@@ -45,12 +45,13 @@ if (liriArgv === "movie-this"){
 		var movieResults = (
 			"Title: " + jsonData.Title + "\r\n"+
 			"Year: " + jsonData.Year + "\r\n"+
-			"Imdb Rating: " + jsonData.imdbRating + "\r\n"+
+			"IMDB Rating: " + jsonData.imdbRating + "\r\n"+
+			"Rated: " + jsonData.rated + "\r\n"+
 			"Country: " + jsonData.Country + "\r\n"+
 			"Language: " + jsonData.Language + "\r\n"+
 			"Plot: " + jsonData.Plot + "\r\n"+
 			"Actors: " + jsonData.Actors + "\r\n"+
-			"Rotten Tomatoes Rating: " + jsonData.tomatoRating +"\r\n"
+			"Rotten Tomatoes URL: " + jsonData.tomatoRating +"\r\n"
 		)
 		console.log(movieResults);
 	})
