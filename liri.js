@@ -1,107 +1,153 @@
-require('dotenv').config();
-var fs = require("fs"); //reads and writes files
-var liriArgv = process.argv[2];
-var query = process.argv[3];
-var Twitter = require('twitter');
-var Spotify = require('node-spotify-api');
+// DEPENDENCIES
+// =====================================
+// Read and set environment variables
+require("dotenv").config();
+
+// Import the Twitter NPM package.
+var Twitter = require("twitter");
+
+// Import the node-spotify-api NPM package.
+var Spotify = require("node-spotify-api");
+
+// Import the API keys
+var keys = require("./keys");
+
+// Import the request npm package.
 var request = require("request");
-var keys = require("./keys.js");
+
+// Import the FS package for read/write.
+var fs = require("fs");
+
+// Initialize the spotify API client using our client id and secret
 var spotify = new Spotify(keys.spotify);
-var client = new Twitter(keys.twitter);
 
+// FUNCTIONS
+// =====================================
 
-if (liriArgv === `my-tweets`){
-	var params = {
-	    screen_name: 'dewinurdin5',
-	    count: 20
-	}
-
-	client.get("statuses/user_timeline", params, function(error, response){
-		if (error){
-			console.log(error);
-		} 
-		// console.log(response[0].text);
-	for (var i = 0; i < response.length; i++){
-			console.log(response[i].text);
-			console.log(response[i].created_at);
-		}
-	})
+// Writes to the log.txt file
+var getArtistNames = function(artist) {
+  return artist.name;
 };
 
-// ----------------OMDB------------------------------------------------------------------------------
-// run a request to the OMDB API with the movie specified
-var queryUrl = "http://www.omdbapi.com/?t=" + query + "&y=&plot=short&apikey=40e9cece";
-var mrNobody = "http://www.omdbapi.com/?t=mr+nobody+&y=&plot=short&r=json&tomatoes=true&apikey=9dc2047";
+// Function for running a Spotify search
+var getMeSpotify = function(songName) {
+  if (songName === undefined) {
+    songName = "What's my age again";
+  }
 
-if (liriArgv === "movie-this"){
-	if (query !== undefined){
-		
-		request(queryUrl, function(error, response, body){
-		var jsonData = JSON.parse(body);
-		var movieResults = (
-			"Title: " + jsonData.Title + "\r\n"+
-			"Year: " + jsonData.Year + "\r\n"+
-			"IMDB Rating: " + jsonData.imdbRating + "\r\n"+
-			"Rated: " + jsonData.rated + "\r\n"+
-			"Country: " + jsonData.Country + "\r\n"+
-			"Language: " + jsonData.Language + "\r\n"+
-			"Plot: " + jsonData.Plot + "\r\n"+
-			"Actors: " + jsonData.Actors + "\r\n"+
-			"Rotten Tomatoes URL: " + jsonData.tomatoRating +"\r\n"
-		)
-		console.log(movieResults);
-	})
-		} else {
-		request(mrNobody, function(error, response, body){
-			console.log(body);
-		});
-	}
+  spotify.search(
+    {
+      type: "track",
+      query: songName
+    },
+    function(err, data) {
+      if (err) {
+        console.log("Error occurred: " + err);
+        return;
+      }
+
+      var songs = data.tracks.items;
+
+      for (var i = 0; i < songs.length; i++) {
+        console.log(i);
+        console.log("artist(s): " + songs[i].artists.map(getArtistNames));
+        console.log("song name: " + songs[i].name);
+        console.log("preview song: " + songs[i].preview_url);
+        console.log("album: " + songs[i].album.name);
+        console.log("-----------------------------------");
+      }
+    }
+  );
 };
 
- // ----------------------SPOTIFY-------------------------------------------------------------------------
+// Function for running a Twitter Search
+var getMyTweets = function() {
+  var client = new Twitter(keys.twitter);
 
- if (liriArgv === `spotify-this-song`){
- 	
-	spotify.search({ type: 'track', query: query, limit: 1})
- 	 .then(function(data) {
-       var song = data.tracks.items[0];
-       
-       var songResults = (
-			"Title: " + song.name + "\r\n" +
-			"Artist: " + song.artists[0].name + "\r\n" +
-			"Album: " + song.album.name + "\r\n" +
-			"Link: " + song.preview_url +"\r\n"
-       )
-       console.log(songResults)
-   })
- 	 
-	  .catch(function(err) {
-	    console.log(err);
-	  });
+  var params = {
+    screen_name: "cnn"
+  };
+  client.get("statuses/user_timeline", params, function(error, tweets, response) {
+    if (!error) {
+      for (var i = 0; i < tweets.length; i++) {
+        console.log(tweets[i].created_at);
+        console.log("");
+        console.log(tweets[i].text);
+      }
+    }
+  });
 };
 
-// =============================DO WHAT IT SAYS==========================================================
-// Using the fs Node package, LIRI will take the text inside of random.txt and 
-//then use it to call one of LIRI's commands.
-// It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-function doWhatItSays(){
-	if (liriArgv === `do-what-it-says`){
-	fs.readFile("random.txt", "utf8", function(err, data){
-		if (err) {
-			console.log(err);
-		} else {
-			console.log(data);
-			}
-		});
-	}
-}
-doWhatItSays();
+// Function for running a Movie Search
+var getMeMovie = function(movieName) {
+  if (movieName === undefined) {
+    movieName = "Mr Nobody";
+  }
 
-// In addition to logging the data to your terminal/bash window, 
-//output the data to a .txt file called log.txt.
-// Make sure you append each command you run to the log.txt file. 
-// Do not overwrite your file each time you run a command.
+  var urlHit = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=full&tomatoes=true&apikey=trilogy";
 
-function logText(){
-    fs.appendFile("log.txt", "LIRI: " + liriArgv + "\nQuery: " + query + "\n"); 
+  request(urlHit, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var jsonData = JSON.parse(body);
+
+      console.log("Title: " + jsonData.Title);
+      console.log("Year: " + jsonData.Year);
+      console.log("Rated: " + jsonData.Rated);
+      console.log("IMDB Rating: " + jsonData.imdbRating);
+      console.log("Country: " + jsonData.Country);
+      console.log("Language: " + jsonData.Language);
+      console.log("Plot: " + jsonData.Plot);
+      console.log("Actors: " + jsonData.Actors);
+      console.log("Rotton Tomatoes URL: " + jsonData.tomatoURL);
+    }
+  });
 };
+
+// Function for running a command based on text file
+var doWhatItSays = function() {
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    console.log(data);
+
+    var dataArr = data.split(",");
+
+    if (dataArr.length === 2) {
+      pick(dataArr[0], dataArr[1]);
+    }
+    else if (dataArr.length === 1) {
+      pick(dataArr[0]);
+    }
+  });
+};
+
+// Function for determining which command is executed
+var pick = function(caseData, functionData) {
+  switch (caseData) {
+	// 1. `node liri.js my-tweets`
+    case "my-tweets":
+      getMyTweets();
+	  break;
+	//   2. `node liri.js spotify-this-song '<song name here>'`
+    case "spotify-this-song":
+      getMeSpotify(functionData);
+	  break;
+	//   3. `node liri.js movie-this '<movie name here>'`
+    case "movie-this":
+      getMeMovie(functionData);
+	  break;
+	//   `node liri.js do-what-it-says`
+    case "do-what-it-says":
+      doWhatItSays();
+      break;
+    default:
+      console.log("LIRI doesn't know that");
+  }
+};
+
+// Function which takes in command line arguments and executes correct function accordigly
+var runThis = function(argOne, argTwo) {
+  pick(argOne, argTwo);
+};
+
+// MAIN PROCESS
+// =====================================
+runThis(process.argv[2], process.argv[3]);
